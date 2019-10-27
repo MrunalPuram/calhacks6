@@ -287,10 +287,12 @@ app.layout = html.Div([
 #   fig.update_layout(scene_camera=camera, title=name)
 #   return f
 
-swipe_right = True
+swipe_right = False
 swipe_left = False
 swipe_up = False
 swipe_down = False
+zoom_in = False
+zoom_out = True
 theta = np.pi/80
 
 @app.callback(
@@ -299,20 +301,46 @@ theta = np.pi/80
     [dash.dependencies.State('graph2', 'figure')]
     )
 def update_zoom(n, figure):
-    if swipe_right:
-        # figure['layout']['scene']['camera']['eye']['x'] -= 0.01
-        # figure['layout']['scene']['camera']['eye']['y'] -= 0.01
-        # figure['layout']['scene']['camera']['eye']['z'] -= 0.01
-        # print(figure['layout']['scene']['camera'])
-        temp_x = figure['layout']['scene']['camera']['eye']['x']
-        temp_y = figure['layout']['scene']['camera']['eye']['y']
-        temp_z = figure['layout']['scene']['camera']['eye']['z']
-        old = np.array([temp_x, temp_y, temp_z])
-        R = np.array([
-            [np.cos(theta), -np.sin(theta), 0],
-            [np.sin(theta), np.cos(theta), 0],
-            [0, 0, 1]
-            ])
+    temp_x = figure['layout']['scene']['camera']['eye']['x']
+    temp_y = figure['layout']['scene']['camera']['eye']['y']
+    temp_z = figure['layout']['scene']['camera']['eye']['z']
+    old = np.array([temp_x, temp_y, temp_z])
+    if zoom_in or zoom_out:
+        if zoom_in:
+            figure['layout']['scene']['camera']['eye']['x'] -= 0.01
+            figure['layout']['scene']['camera']['eye']['y'] -= 0.01
+            figure['layout']['scene']['camera']['eye']['z'] -= 0.01
+        elif zoom_out:
+            figure['layout']['scene']['camera']['eye']['x'] += 0.01
+            figure['layout']['scene']['camera']['eye']['y'] += 0.01
+            figure['layout']['scene']['camera']['eye']['z'] += 0.01
+    else:
+        R = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+        if swipe_right:
+            # print(figure['layout']['scene']['camera'])
+            R = np.array([
+                [np.cos(-theta), -np.sin(-theta), 0],
+                [np.sin(-theta), np.cos(-theta), 0],
+                [0, 0, 1]
+                ])
+        elif swipe_left:
+            R = np.array([
+                [np.cos(theta), -np.sin(theta), 0],
+                [np.sin(theta), np.cos(theta), 0],
+                [0, 0, 1]
+                ])
+        if swipe_up:
+            R = np.array([
+                [np.cos(theta), 0, np.sin(theta)],
+                [0, 1, 0],
+                [-np.sin(theta), 0, np.cos(theta)]
+                ])
+        elif swipe_down:
+            R = np.array([
+                [np.cos(-theta), 0, np.sin(-theta)],
+                [0, 1, 0],
+                [-np.sin(-theta), 0, np.cos(-theta)]
+                ])
         new = np.dot(R, old)
         figure['layout']['scene']['camera']['eye']['x'] = new[0]
         figure['layout']['scene']['camera']['eye']['y'] = new[1]
