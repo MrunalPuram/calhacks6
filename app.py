@@ -21,7 +21,7 @@ import threading
 
 
 
-commands = {'zoom_in' : False, 'zoom_out' : False, 'swipe_right' : False, 'swipe_left' : False, 'swipe_up' : False, 'swipe_down' : False, 'idle': True}
+commands = {'zoom_in' : False, 'zoom_out' : False, 'swipe_right' : False, 'swipe_left' : False, 'swipe_up' : False, 'swipe_down' : False, 'idle': True, 'x':0, 'y':0}
 
 def effect(inp):
     inp = inp.strip()
@@ -107,117 +107,17 @@ app = dash.Dash(
     routes_pathname_prefix='/dash/'
 )
 
-# @app.route('/')
-# def index():
-#     return 'Hello World'
 
 import dash_core_components as dcc
-# app.layout = html.Div("My Dash app")
-# app.layout = html.Div([
-#     html.Label('Dropdown'),
-#     dcc.Dropdown(
-#         options=[
-#             {'label': 'New York City', 'value': 'NYC'},
-#             {'label': u'Montréal', 'value': 'MTL'},
-#             {'label': 'San Francisco', 'value': 'SF'}
-#         ],
-#         value='MTL'
-#     ),
-
-#     html.Label('Multi-Select Dropdown'),
-#     dcc.Dropdown(
-#         options=[
-#             {'label': 'New York City', 'value': 'NYC'},
-#             {'label': u'Montréal', 'value': 'MTL'},
-#             {'label': 'San Francisco', 'value': 'SF'}
-#         ],
-#         value=['MTL', 'SF'],
-#         multi=True
-#     ),
-
-#     html.Label('Radio Items'),
-#     dcc.RadioItems(
-#         options=[
-#             {'label': 'New York City', 'value': 'NYC'},
-#             {'label': u'Montréal', 'value': 'MTL'},
-#             {'label': 'San Francisco', 'value': 'SF'}
-#         ],
-#         value='MTL'
-#     ),
-
-#     html.Label('Checkboxes'),
-#     dcc.Checklist(
-#         options=[
-#             {'label': 'New York City', 'value': 'NYC'},
-#             {'label': u'Montréal', 'value': 'MTL'},
-#             {'label': 'San Francisco', 'value': 'SF'}
-#         ],
-#         value=['MTL', 'SF']
-#     ),
-
-#     html.Label('Text Input'),
-#     dcc.Input(value='MTL', type='text'),
-
-#     html.Label('Slider'),
-#     dcc.Slider(
-#         min=0,
-#         max=9,
-#         marks={i: 'Label {}'.format(i) if i == 1 else str(i) for i in range(1, 6)},
-#         value=5,
-#     ),
-# ], style={'columnCount': 2})
-
-# dcc.Graph(
-#     figure=go.Figure(
-#         data=[
-#             go.Bar(
-#                 x=[1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
-#                    2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012],
-#                 y=[219, 146, 112, 127, 124, 180, 236, 207, 236, 263,
-#                    350, 430, 474, 526, 488, 537, 500, 439],
-#                 name='Rest of world',
-#                 marker=go.bar.Marker(
-#                     color='rgb(55, 83, 109)'
-#                 )
-#             ),
-#             go.Bar(
-#                 x=[1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
-#                    2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012],
-#                 y=[16, 13, 10, 11, 28, 37, 43, 55, 56, 88, 105, 156, 270,
-#                    299, 340, 403, 549, 499],
-#                 name='China',
-#                 marker=go.bar.Marker(
-#                     color='rgb(26, 118, 255)'
-#                 )
-#             )
-#         ],
-#         layout=go.Layout(
-#             title='US Export of Plastic Scrap',
-#             showlegend=True,
-#             legend=go.layout.Legend(
-#                 x=0,
-#                 y=1.0
-#             ),
-#             margin=go.layout.Margin(l=40, r=0, t=40, b=30)
-#         )
-#     ),
-#     style={'height': 300},
-#     id='my-graph'
-# )
 
 t = np.linspace(0, 10, 50)
 x, y, z = np.cos(t), np.sin(t), t
 
-# fig = go.Figure(data=[go.Scatter3d(x=x, y=y, z=z,
-#                                    mode='markers')])
+
 iris = px.data.iris()
 fig = px.scatter_3d(iris, x='sepal_length', y='sepal_width', z='petal_width',
               color='species')
-# camera = dict(
-#     up=dict(x=0, y=0, z=1),
-#     center=dict(x=0, y=0, z=0),
-#     eye=dict(x=1.25, y=1.25, z=1.25)
-# )
+
 camera = dict(
     up=dict(x=0, y=0, z=1),
     center=dict(x=0, y=0, z=0),
@@ -227,49 +127,10 @@ camera = dict(
 fig.update_layout(scene_camera=camera)
 
 
-# np.random.seed(1)
-
-# x = np.random.rand(100)
-# y = np.random.rand(100)
-
-# f = go.FigureWidget([go.Scatter(x=x, y=y, mode='markers')])
-
-# scatter = f.data[0]
-# colors = ['#a3a7e4'] * 100
-# scatter.marker.color = colors
-# scatter.marker.size = [10] * 100
-# f.layout.hovermode = 'closest'
-
-
-# # create our callback function
-# def update_point(trace, points, selector):
-#     c = list(scatter.marker.color)
-#     s = list(scatter.marker.size)
-#     for i in points.point_inds:
-#         c[i] = '#bae2be'
-#         s[i] = 20
-#         with f.batch_update():
-#             scatter.marker.color = c
-#             scatter.marker.size = s
-
-
-# scatter.on_click(update_point)
-# name = 'default'
-# # Default parameters which are used when layout.scene.camera is not provided
-# camera = dict(
-#    up=dict(x=0, y=0, z=1),
-#    center=dict(x=0, y=0, z=0),
-#    eye=dict(x=1.25, y=1.25, z=1.25)
-# )
-# # fig.update_layout(scene_camera=camera, title=name)
-
-# eye_dict = {
-#   'x':0,
-#   'y':0,
-#   'z':0
-# }
-
 app.layout = html.Div([
+    dcc.Input(id="input-2", type="number", value=2),
+    dcc.Input(id="input-3", type="number", value=3),
+    html.Div(id="number-output"),
     dcc.Dropdown(
         id='my-dropdown',
         options=[
@@ -306,9 +167,32 @@ app.layout = html.Div([
             id='interval-component',
             interval=1*55, # in milliseconds
             n_intervals=0
-        )
+        ),
+    dcc.Input(id="input-1", type="number", value=1),
+
 ])
 
+
+# @app.callback(
+#     dash.dependencies.Output("input-1", "style"),
+#     [dash.dependencies.Input("input-2", "value"), dash.dependencies.Input("input-3", "value")],
+# )
+# def update_output(input2, input3):
+#     x = input2
+#     y = input3
+#     style = {
+#         "padding": 0,
+#         "width": "10px",
+#         "height": "10px",
+#         "border": "none",
+#         "position": "fixed",
+#         "left":x,
+#         "top":y,
+#         "background": "#000000",
+#         "border-radius": "25px"
+
+#     }
+#     return style
 
 # @app.callback(
 #   dash.dependencies.Output('graph2', 'figure'),
@@ -325,7 +209,7 @@ app.layout = html.Div([
 theta = np.pi/80
 
 @app.callback(
-    dash.dependencies.Output('graph2', 'figure'),
+    [dash.dependencies.Output('graph2', 'figure'), dash.dependencies.Output("input-1", "style")],
     [dash.dependencies.Input('interval-component', 'n_intervals')],
     [dash.dependencies.State('graph2', 'figure')]
     )
@@ -382,7 +266,22 @@ def update_zoom(n, figure):
     # figure['layout']['scene']['camera']['eye']['z'] -= 0.01
     # if (n%10 == 0):
     #   pprint.pprint(figure)
-    return figure
+
+    x = commands['x']
+    y = commands['y']
+    style = {
+        "padding": 0,
+        "width": "10px",
+        "height": "10px",
+        "border": "none",
+        "position": "fixed",
+        "left":x,
+        "top":y,
+        "background": "#000000",
+        "border-radius": "25px"
+
+    }
+    return figure, style
 
 
 
