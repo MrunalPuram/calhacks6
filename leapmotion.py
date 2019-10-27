@@ -41,6 +41,8 @@ class SampleListener(Leap.Listener):
     circling = False
     moving = 0
     zoom_thresh = 0.5
+    x = 0
+    y = 0
     last = time.time()
     def on_init(self, controller):
         print("Initialized")
@@ -91,6 +93,9 @@ class SampleListener(Leap.Listener):
                 # Get bones
                 for b in range(0, 4):
                     bone = finger.bone(b)
+                    if self.finger_names[finger.type] == 'Index' and handType == "Left hand" and b == 3:
+                        self.x = max(0, (192/20) * (100 + bone.center[0]))
+                        self.y = max(0, (108/30) * (40 + bone.center[1])))
                     if self.finger_names[finger.type] == 'Thumb' and self.bone_names[bone.type]=='Distal':
                         if handType == "Left hand":
                             lt = bone
@@ -102,6 +107,7 @@ class SampleListener(Leap.Listener):
                         else:
                             rf = bone
         distr, distl, scaling = 0, 0, 0
+        send = str(self.x)  + ", " + str(self.y) + ", "
         try:
            nothing = True
            for gesture in frame.gestures():
@@ -112,7 +118,7 @@ class SampleListener(Leap.Listener):
                 #         gesture.id, self.state_names[gesture.state],
                 #         swipe.position, swipe.direction, swipe.speed)
                 if swipe.direction[0] <= 0:
-                    print("swipe_left")
+                    print(send + "swipe_left")
                     sys.stdout.flush()
                     #TODO: Change leap motion code to dict update
                     win32api.PostMessage(
@@ -138,7 +144,7 @@ class SampleListener(Leap.Listener):
                     0)
                 else:
                     #TODO: Change leap motion code to dict update
-                    print("swipe_right")
+                    print(send + "swipe_right")
                     sys.stdout.flush()
                     win32api.PostMessage(
                     self.handle['FREEGLUT'],
@@ -174,7 +180,7 @@ class SampleListener(Leap.Listener):
                    degrees = swept_angle * Leap.RAD_TO_DEG
                    if clockwiseness == "clockwise" and time.time() - self.last > self.zoom_thresh:
                        #TODO: Change leap motion code to dict update
-                       print("zoom_in")
+                       print(send + "zoom_in")
                        sys.stdout.flush()
                        win32api.PostMessage(
                        self.handle['FREEGLUT'],
@@ -190,7 +196,7 @@ class SampleListener(Leap.Listener):
                        self.last = time.time()
                    elif clockwiseness == "counterclockwise" and time.time() - self.last > self.zoom_thresh:
                        #TODO: Change leap motion code to dict update
-                       print("zoom_out")
+                       print(send + "zoom_out")
                        sys.stdout.flush()
                        win32api.PostMessage(
                        self.handle['FREEGLUT'],
@@ -205,7 +211,7 @@ class SampleListener(Leap.Listener):
                        time.sleep(0.5)
                        self.last = time.time()
            if nothing:
-               print("idle")
+               print(send + "idle")
                sys.stdout.flush()
         except:
             return
@@ -226,23 +232,6 @@ class SampleListener(Leap.Listener):
 
         if state == Leap.Gesture.STATE_INVALID:
             return "STATE_INVALID"
-
-def left():
-    win32api.PostMessage(
-    handle['FREEGLUT'],
-    win32con.WM_KEYDOWN,
-    win32con.VK_LEFT,
-    0)
-    win32api.PostMessage(
-    handle['FREEGLUT'],
-    win32con.WM_KEYUP,
-    win32con.VK_LEFT,
-    0)
-    win32api.PostMessage(
-    handle['FREEGLUT'],
-    win32con.WM_CHAR,
-    ord("f"),
-    0)
 
 def main():
     # proc = subprocess.Popen("C:\\Program Files (x86)\\Leap Motion\\Core Services\\VisualizerApp.exe", stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
