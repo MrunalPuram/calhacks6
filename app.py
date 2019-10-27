@@ -13,6 +13,8 @@ import json
 
 import pprint
 
+import threading
+
 # app = Flask(__name__)
 
 
@@ -67,6 +69,23 @@ def change_features():
 
 
     return graphJSON
+
+
+@server.before_first_request
+def activate_job():
+    """
+    Runs before first request.
+    Creates new thread for run_job()
+    run_job is used to call a recurring background task
+    Scrapes telo_lab at regular intervals in the background
+    """
+    def run_job():
+        while True:
+            print("Run recurring task")
+            time.sleep(60)
+
+    thread = threading.Thread(target=run_job)
+    thread.start()
 
 
 app = dash.Dash(
