@@ -185,7 +185,7 @@ fig = go.Figure(data=[go.Scatter3d(x=x, y=y, z=z,
 # )
 camera = dict(
     up=dict(x=0, y=0, z=1),
-  	center=dict(x=0, y=0, z=0),
+    center=dict(x=0, y=0, z=0),
     eye=dict(x=1.25, y=1.25, z=1.25)
 )
 
@@ -229,9 +229,9 @@ fig.update_layout(scene_camera=camera)
 # # fig.update_layout(scene_camera=camera, title=name)
 
 # eye_dict = {
-# 	'x':0, 
-# 	'y':0, 
-# 	'z':0
+#   'x':0, 
+#   'y':0, 
+#   'z':0
 # }
 
 app.layout = html.Div([
@@ -269,50 +269,63 @@ app.layout = html.Div([
     ),
     dcc.Interval(
             id='interval-component',
-            interval=1*1000, # in milliseconds
+            interval=1*100, # in milliseconds
             n_intervals=0
         )
 ])
 
 
 # @app.callback(
-# 	dash.dependencies.Output('graph2', 'figure'),
-# 	[dash.dependencies.Input('interval-component', 'n_intervals')])
+#   dash.dependencies.Output('graph2', 'figure'),
+#   [dash.dependencies.Input('interval-component', 'n_intervals')])
 # def update_graph_pls(n):
-# 	f = fig
-# 	eye_dict['x'] -= 0.1
-# 	eye_dict['y'] -= 0.1
-# 	eye_dict['z'] -= 0.1
-# 	camera['eye'] = eye_dict
-# 	fig.update_layout(scene_camera=camera, title=name)
-# 	return f
+#   f = fig
+#   eye_dict['x'] -= 0.1
+#   eye_dict['y'] -= 0.1
+#   eye_dict['z'] -= 0.1
+#   camera['eye'] = eye_dict
+#   fig.update_layout(scene_camera=camera, title=name)
+#   return f
 
 swipe_right = True
 swipe_left = False
 swipe_up = False
 swipe_down = False
+theta = np.pi/48
 
 @app.callback(
-	dash.dependencies.Output('graph2', 'figure'),
-	[dash.dependencies.Input('interval-component', 'n_intervals')],
-	[dash.dependencies.State('graph2', 'figure')]
-	)
+    dash.dependencies.Output('graph2', 'figure'),
+    [dash.dependencies.Input('interval-component', 'n_intervals')],
+    [dash.dependencies.State('graph2', 'figure')]
+    )
 def update_zoom(n, figure):
-	if swipe_right:
-		# figure['layout']['scene']['camera']['eye']['x'] -= 0.01
-		# figure['layout']['scene']['camera']['eye']['y'] -= 0.01
-		# figure['layout']['scene']['camera']['eye']['z'] -= 0.01
-		print(figure['layout']['scene']['camera'])
-		# figure['layout']['scene']['camera']['eye']['y'] -= 0.01
-		# figure['layout']['scene']['camera']['eye']['z'] -= 0.01
+    if swipe_right:
+        # figure['layout']['scene']['camera']['eye']['x'] -= 0.01
+        # figure['layout']['scene']['camera']['eye']['y'] -= 0.01
+        # figure['layout']['scene']['camera']['eye']['z'] -= 0.01
+        # print(figure['layout']['scene']['camera'])
+        temp_x = figure['layout']['scene']['camera']['eye']['x']
+        temp_y = figure['layout']['scene']['camera']['eye']['y']
+        temp_z = figure['layout']['scene']['camera']['eye']['z']
+        old = np.array([temp_x, temp_y, temp_z])
+        R = np.array([
+            [np.cos(theta), -np.sin(theta), 0],
+            [np.sin(theta), np.cos(theta), 0],
+            [0, 0, 1]
+            ])
+        new = np.dot(R, old)
+        figure['layout']['scene']['camera']['eye']['x'] = new[0]
+        figure['layout']['scene']['camera']['eye']['y'] = new[1]
+        figure['layout']['scene']['camera']['eye']['z'] = new[2]
 
-	# print(n)
-	# figure['layout']['scene']['camera']['eye']['x'] -= 0.01
-	# figure['layout']['scene']['camera']['eye']['y'] -= 0.01
-	# figure['layout']['scene']['camera']['eye']['z'] -= 0.01
-	# if (n%10 == 0):
-	# 	pprint.pprint(figure)
-	return figure
+
+    # print(n)
+    # figure['layout']['scene']['camera']['eye']['x'] -= 0.01
+    # figure['layout']['scene']['camera']['eye']['y'] -= 0.01
+    # figure['layout']['scene']['camera']['eye']['z'] -= 0.01
+    # if (n%10 == 0):
+    #   pprint.pprint(figure)
+    return figure
 
 
 
