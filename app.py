@@ -12,6 +12,7 @@ import numpy as np
 import json
 
 import pprint
+import plotly.express as px
 
 import threading
 
@@ -19,7 +20,7 @@ import threading
 
 
 
-
+commands = {'zoom_in' : False, 'zoom_out' : False, 'swipe_right' : False, 'swipe_left' : True, 'swipe_up' : False, 'swipe_down' : False}
 
 server = flask.Flask(__name__)
 
@@ -196,8 +197,11 @@ import dash_core_components as dcc
 t = np.linspace(0, 10, 50)
 x, y, z = np.cos(t), np.sin(t), t
 
-fig = go.Figure(data=[go.Scatter3d(x=x, y=y, z=z,
-                                   mode='markers')])
+# fig = go.Figure(data=[go.Scatter3d(x=x, y=y, z=z,
+#                                    mode='markers')])
+iris = px.data.iris()
+fig = px.scatter_3d(iris, x='sepal_length', y='sepal_width', z='petal_width',
+              color='species')
 # camera = dict(
 #     up=dict(x=0, y=0, z=1),
 #     center=dict(x=0, y=0, z=0),
@@ -325,37 +329,37 @@ def update_zoom(n, figure):
     temp_y = figure['layout']['scene']['camera']['eye']['y']
     temp_z = figure['layout']['scene']['camera']['eye']['z']
     old = np.array([temp_x, temp_y, temp_z])
-    if zoom_in or zoom_out:
-        if zoom_in:
+    if commands['zoom_in'] or commands['zoom_out']:
+        if commands['zoom_in']:
             figure['layout']['scene']['camera']['eye']['x'] -= 0.01
             figure['layout']['scene']['camera']['eye']['y'] -= 0.01
             figure['layout']['scene']['camera']['eye']['z'] -= 0.01
-        elif zoom_out:
+        elif commands['zoom_out']:
             figure['layout']['scene']['camera']['eye']['x'] += 0.01
             figure['layout']['scene']['camera']['eye']['y'] += 0.01
             figure['layout']['scene']['camera']['eye']['z'] += 0.01
     else:
         R = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-        if swipe_right:
+        if commands['swipe_right']:
             # print(figure['layout']['scene']['camera'])
             R = np.array([
                 [np.cos(-theta), -np.sin(-theta), 0],
                 [np.sin(-theta), np.cos(-theta), 0],
                 [0, 0, 1]
                 ])
-        elif swipe_left:
+        elif commands['swipe_left']:
             R = np.array([
                 [np.cos(theta), -np.sin(theta), 0],
                 [np.sin(theta), np.cos(theta), 0],
                 [0, 0, 1]
                 ])
-        if swipe_up:
+        if commands['swipe_up']:
             R = np.array([
                 [np.cos(theta), 0, np.sin(theta)],
                 [0, 1, 0],
                 [-np.sin(theta), 0, np.cos(theta)]
                 ])
-        elif swipe_down:
+        elif commands['swipe_down']:
             R = np.array([
                 [np.cos(-theta), 0, np.sin(-theta)],
                 [0, 1, 0],
