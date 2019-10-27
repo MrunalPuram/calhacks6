@@ -269,7 +269,7 @@ app.layout = html.Div([
     ),
     dcc.Interval(
             id='interval-component',
-            interval=1*100, # in milliseconds
+            interval=1*55, # in milliseconds
             n_intervals=0
         )
 ])
@@ -291,7 +291,7 @@ swipe_right = True
 swipe_left = False
 swipe_up = False
 swipe_down = False
-theta = np.pi/48
+theta = np.pi/80
 
 @app.callback(
     dash.dependencies.Output('graph2', 'figure'),
