@@ -152,13 +152,13 @@ app.layout = html.Div([
     #         }
     #     }
     # )
-    dcc.Graph(
-        id='graph',
-        config={
-            'showSendToCloud': True,
-            'plotlyServerURL': 'https://plot.ly'
-        }
-    ),
+    # dcc.Graph(
+    #     id='graph',
+    #     config={
+    #         'showSendToCloud': True,
+    #         'plotlyServerURL': 'https://plot.ly'
+    #     }
+    # ),
     dcc.Graph(
         id='graph2',
         figure=fig
@@ -220,13 +220,13 @@ def update_zoom(n, figure):
     old = np.array([temp_x, temp_y, temp_z])
     if commands['zoom_in'] or commands['zoom_out']:
         if commands['zoom_in']:
-            figure['layout']['scene']['camera']['eye']['x'] -= 0.01
-            figure['layout']['scene']['camera']['eye']['y'] -= 0.01
-            figure['layout']['scene']['camera']['eye']['z'] -= 0.01
+            figure['layout']['scene']['camera']['eye']['x'] -= 0.05
+            figure['layout']['scene']['camera']['eye']['y'] -= 0.05
+            figure['layout']['scene']['camera']['eye']['z'] -= 0.05
         elif commands['zoom_out']:
-            figure['layout']['scene']['camera']['eye']['x'] += 0.01
-            figure['layout']['scene']['camera']['eye']['y'] += 0.01
-            figure['layout']['scene']['camera']['eye']['z'] += 0.01
+            figure['layout']['scene']['camera']['eye']['x'] += 0.05
+            figure['layout']['scene']['camera']['eye']['y'] += 0.05
+            figure['layout']['scene']['camera']['eye']['z'] += 0.05
     else:
         R = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
         if commands['swipe_right']:
@@ -285,10 +285,10 @@ def update_zoom(n, figure):
 
 
 
-@app.callback(
-    dash.dependencies.Output('graph', 'figure'),
-    [dash.dependencies.Input('my-dropdown', 'value')])
-def update_output(value):
+# @app.callback(
+#     dash.dependencies.Output('graph', 'figure'),
+#     [dash.dependencies.Input('my-dropdown', 'value')])
+# def update_output(value):
     # zoom(camera, name)
     y_array_dict = {
         'NYC': [4,2,3],

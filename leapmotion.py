@@ -7,10 +7,9 @@
 # between Leap Motion and you, your company or other organization.             #
 ################################################################################
 import sys
-sys.path.append('C:\\Users\\User\\Documents\\Berkeley\\calhacks\\leapmotion\\LeapDeveloperKit_2.3.1+31549_win\\LeapSDK\\lib\\x64')
+sys.path.append('C:\\Users\\Steven\\Downloads\\Leap_Motion_SDK_Windows_2.3.1\\LeapDeveloperKit_2.3.1+31549_win\\LeapSDK\\lib\\x64')
 import Leap, sys, thread, time
 from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
-import pyautogui
 import subprocess
 import win32con
 import win32api
@@ -95,7 +94,7 @@ class SampleListener(Leap.Listener):
                     bone = finger.bone(b)
                     if self.finger_names[finger.type] == 'Index' and handType == "Left hand" and b == 3:
                         self.x = max(0, (192/20) * (100 + bone.center[0]))
-                        self.y = max(0, (108/30) * (40 + bone.center[1])))
+                        self.y = max(0, (108/30) * (40 + bone.center[1]))
                     if self.finger_names[finger.type] == 'Thumb' and self.bone_names[bone.type]=='Distal':
                         if handType == "Left hand":
                             lt = bone
