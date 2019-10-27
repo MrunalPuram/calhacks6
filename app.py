@@ -13,6 +13,7 @@ import json
 
 import pprint
 import plotly.express as px
+import subprocess
 
 import threading
 
@@ -20,7 +21,14 @@ import threading
 
 
 
-commands = {'zoom_in' : False, 'zoom_out' : False, 'swipe_right' : False, 'swipe_left' : True, 'swipe_up' : False, 'swipe_down' : False}
+commands = {'zoom_in' : False, 'zoom_out' : False, 'swipe_right' : False, 'swipe_left' : False, 'swipe_up' : False, 'swipe_down' : False, 'idle': True}
+
+def effect(inp):
+    inp = inp.strip()
+    for i in commands:
+        commands[i] = True if i == inp else False
+        print(i)
+        print(inp)
 
 server = flask.Flask(__name__)
 
@@ -81,11 +89,14 @@ def activate_job():
     Scrapes telo_lab at regular intervals in the background
     """
     def run_job():
-        while True:
-            print("Run recurring task")
-            time.sleep(60)
-        
-
+        python2_path = "C:\\Python27\\python.exe"
+        command = python2_path + " leapmotion.py"
+        process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        with process.stdout:
+            print("nothing")
+            for line in iter(process.stdout.readline, b''):
+                print(line.decode())
+                effect(line.decode())
     thread = threading.Thread(target=run_job)
     thread.start()
 
@@ -311,12 +322,6 @@ app.layout = html.Div([
 #   fig.update_layout(scene_camera=camera, title=name)
 #   return f
 
-swipe_right = False
-swipe_left = False
-swipe_up = False
-swipe_down = False
-zoom_in = False
-zoom_out = True
 theta = np.pi/80
 
 @app.callback(
