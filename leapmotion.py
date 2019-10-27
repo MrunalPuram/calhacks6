@@ -44,9 +44,11 @@ class SampleListener(Leap.Listener):
     last = time.time()
     def on_init(self, controller):
         print("Initialized")
+        sys.stdout.flush()
 
     def on_connect(self, controller):
         print("Connected")
+        sys.stdout.flush()
 
         # Enable gestures
         controller.enable_gesture(Leap.Gesture.TYPE_CIRCLE);
@@ -57,16 +59,16 @@ class SampleListener(Leap.Listener):
     def on_disconnect(self, controller):
         # Note: not dispatched when running in a debugger.
         print("Disconnected")
+        sys.stdout.flush()
 
     def on_exit(self, controller):
         print("Exited")
+        sys.stdout.flush()
 
     def on_frame(self, controller):
-        global handle
         # Get the most recent frame and report some basic information
         frame = controller.frame()
         rt, lt, rf, lf = None, None, None, None
-
         # Get hands
         for hand in frame.hands:
 
@@ -101,13 +103,18 @@ class SampleListener(Leap.Listener):
                             rf = bone
         distr, distl, scaling = 0, 0, 0
         try:
+           nothing = True
            for gesture in frame.gestures():
                if gesture.type == Leap.Gesture.TYPE_SWIPE:
                 swipe = SwipeGesture(gesture)
-                print "  Swipe id: %d, state: %s, position: %s, direction: %s, speed: %f" % (
-                        gesture.id, self.state_names[gesture.state],
-                        swipe.position, swipe.direction, swipe.speed)
+                nothing = False
+                # print "  Swipe id: %d, state: %s, position: %s, direction: %s, speed: %f" % (
+                #         gesture.id, self.state_names[gesture.state],
+                #         swipe.position, swipe.direction, swipe.speed)
                 if swipe.direction[0] <= 0:
+                    print("swipe_left")
+                    sys.stdout.flush()
+                    #TODO: Change leap motion code to dict update
                     win32api.PostMessage(
                     self.handle['FREEGLUT'],
                     win32con.WM_KEYDOWN,
@@ -118,7 +125,7 @@ class SampleListener(Leap.Listener):
                     win32con.WM_KEYUP,
                     win32con.VK_LEFT,
                     0)
-                    time.sleep(swipe.speed/100)
+                    time.sleep(0.5)
                     win32api.PostMessage(
                     self.handle['FREEGLUT'],
                     win32con.WM_KEYDOWN,
@@ -130,6 +137,9 @@ class SampleListener(Leap.Listener):
                     win32con.VK_RIGHT,
                     0)
                 else:
+                    #TODO: Change leap motion code to dict update
+                    print("swipe_right")
+                    sys.stdout.flush()
                     win32api.PostMessage(
                     self.handle['FREEGLUT'],
                     win32con.WM_KEYDOWN,
@@ -140,7 +150,7 @@ class SampleListener(Leap.Listener):
                     win32con.WM_KEYUP,
                     win32con.VK_RIGHT,
                     0)
-                    time.sleep(swipe.speed/100)
+                    time.sleep(0.5)
                     win32api.PostMessage(
                     self.handle['FREEGLUT'],
                     win32con.WM_KEYDOWN,
@@ -152,7 +162,6 @@ class SampleListener(Leap.Listener):
                     win32con.VK_LEFT,
                     0)
                if gesture.type == Leap.Gesture.TYPE_CIRCLE:
-                   print("circle")
                    circle = CircleGesture(gesture)
                    if circle.pointable.direction.angle_to(circle.normal) <= Leap.PI/2:
                        clockwiseness = "clockwise"
@@ -163,10 +172,10 @@ class SampleListener(Leap.Listener):
                        previous_update = CircleGesture(controller.frame(1).gesture(circle.id))
                        swept_angle =  (circle.progress - previous_update.progress) * 2 * Leap.PI
                    degrees = swept_angle * Leap.RAD_TO_DEG
-                   print(self.last)
-                   print(time.time() - self.last)
                    if clockwiseness == "clockwise" and time.time() - self.last > self.zoom_thresh:
-                       print(self.last)
+                       #TODO: Change leap motion code to dict update
+                       print("zoom_in")
+                       sys.stdout.flush()
                        win32api.PostMessage(
                        self.handle['FREEGLUT'],
                        win32con.WM_CHAR,
@@ -177,8 +186,12 @@ class SampleListener(Leap.Listener):
                        win32con.WM_CHAR,
                        ord("="),
                        0)
+                       time.sleep(0.5)
                        self.last = time.time()
                    elif clockwiseness == "counterclockwise" and time.time() - self.last > self.zoom_thresh:
+                       #TODO: Change leap motion code to dict update
+                       print("zoom_out")
+                       sys.stdout.flush()
                        win32api.PostMessage(
                        self.handle['FREEGLUT'],
                        win32con.WM_CHAR,
@@ -189,69 +202,13 @@ class SampleListener(Leap.Listener):
                        win32con.WM_CHAR,
                        ord("-"),
                        0)
+                       time.sleep(0.5)
                        self.last = time.time()
-               print("here")
-
-           #print(rf.next_joint)
-           distr = euclidean(rt.next_joint, rf.next_joint)
-           distl = euclidean(lt.next_joint, lf.next_joint)
-           #scaling = rt.next_joint - lt.next_joint#euclidean(rt.next_joint, lt.next_joint)
-           #print(rt.next_joint)
-           #print(lt.next_joint)
-           #print(scaling)
-           #scaling = normalize(self.first, self.second, scaling)
-           #print(distr)
-           #print(scaling)
-           if(distr <= self.thresh and distl <= self.thresh):
-               print('PINCHING')
-               rx = rt.next_joint.x + self.width/2
-               lx = lt.next_joint.x + self.width/2
-               rz = rt.next_joint.z + self.height/2
-               lz = lt.next_joint.z + self.height/2
-               #print("HI")
-               deltarx = rx - (self.lastrt.next_joint.x + self.width/2)
-               deltalx = lx - (self.lastlt.next_joint.x + self.width/2)
-               rightdir = deltarx/abs(deltarx)
-               leftdir = deltalx/abs(deltalx)
-               print(rt.next_joint.x)
-               print(self.lastrt.next_joint.x)
-
-               rx = 0 if rx < 0 else rx
-               #print("KO")
-               rz = 0 if rz < 0 else rz
-               #print("OK")
-               lx = 0 if lx < 0 else lx
-               lz = 0 if lz < 0 else lz
-               print("BYE")
-               rx = normalize(0,self.width,rx)*pyautogui.size()[0]
-               lx = normalize(0,self.width,lx)*pyautogui.size()[0]
-               rz = normalize(0,self.height,rz)*pyautogui.size()[1]
-               lz = normalize(0,self.height,lz)*pyautogui.size()[1]
-               #print("HI")
-               gotox = int((rx+lx)/2)
-               gotoy = int((rz+lz)/2)
-               print("HI")
-               pyautogui.moveTo(gotox, gotoy, duration=0)
-               print(rightdir)
-               print(leftdir)
-               print("HI")
-               if rightdir == 1 and leftdir == -1 and (abs(deltarx) > 4 or abs(deltalx) > 4):
-                   pyautogui.scroll(100)
-               elif rightdir == -1 and leftdir == 1 and (abs(deltarx) > 4 or abs(deltalx) > 4):
-                   pyautogui.scroll(-100)
-           else:
-               xpos = rf.next_joint.x + self.width/2 #0 at the left
-               ypos = rf.next_joint.z + self.height/2 #0 at the top
-               xpos = 0 if xpos < 0 else xpos
-               ypos = 0 if ypos < 0 else ypos
-               pyautogui.moveTo(int(normalize(0,self.width,xpos)*pyautogui.size()[0]), int(normalize(0,self.height,ypos)*pyautogui.size()[1]), duration=0)
-
-               #pyautogui.moveTo(0, 100, duration = 1)
-           print("")
+           if nothing:
+               print("idle")
+               sys.stdout.flush()
         except:
             return
-        print("HELLO")
-        print(rt.next_joint.x)
         self.lastrt, self.lastlt = rt, lt
 
 
@@ -315,7 +272,6 @@ def main():
     while not handle:   # loop until the window is loaded
         time.sleep(0.5)
         win32gui.EnumThreadWindows(tid, wcallb, handle)
-    print(handle)
     win32api.PostMessage(
     handle['FREEGLUT'],
     win32con.WM_CHAR,
@@ -331,6 +287,7 @@ def main():
 
     # Keep this process running until Enter is pressed
     print("Press Enter to quit...")
+    sys.stdout.flush()
     try:
         sys.stdin.readline()
     except KeyboardInterrupt:
