@@ -26,10 +26,12 @@ def plot_across_companies(tseries, num_features):
         for i in range(1,num_features+1):
             if i > j:
                 fig = plt.figure()
+                ax = fig.add_subplot(111, projection='3d')
                 for k in tseries.keys():
-                    plt.scatter(tseries[k][:,i], tseries[k][:,j])
-                    plt.xlabel(features[i-1])
-                    plt.ylabel(features[j-1])
+                    ax.scatter(tseries[k][:,0],tseries[k][:,i], tseries[k][:,j])
+                    plt.xlabel("Number of Days Since 1/1/2016")
+                    plt.ylabel(features[i-1])
+                    plt.zlabel(features[j-1])
                 plt.show()
 
 
@@ -108,7 +110,9 @@ for id in companies.keys():
 
     vals = np.array(vals)
     tseries[id] = vals
-#print(tseries)
+# print(tseries['905255'])
+#for i in tseries.keys():
+#    print(tseries[i])
 
 #plot_companies(tseries)
 plot_across_companies(tseries, 4)
