@@ -29,7 +29,7 @@ def index():
     feature = 'Bar'
     bar = create_plot(feature)
     return render_template('index.html', plot=bar)
-    
+
 
 def create_plot(feature):
     if feature == 'Bar':
@@ -83,6 +83,7 @@ def activate_job():
         while True:
             print("Run recurring task")
             time.sleep(60)
+        
 
     thread = threading.Thread(target=run_job)
     thread.start()
@@ -190,7 +191,7 @@ import dash_core_components as dcc
 #     ),
 #     style={'height': 300},
 #     id='my-graph'
-# ) 
+# )
 
 t = np.linspace(0, 10, 50)
 x, y, z = np.cos(t), np.sin(t), t
@@ -248,8 +249,8 @@ fig.update_layout(scene_camera=camera)
 # # fig.update_layout(scene_camera=camera, title=name)
 
 # eye_dict = {
-#   'x':0, 
-#   'y':0, 
+#   'x':0,
+#   'y':0,
 #   'z':0
 # }
 
@@ -384,4 +385,3 @@ def update_output(value):
 
 if __name__ == '__main__':
     app.run_server(debug=True)
-
